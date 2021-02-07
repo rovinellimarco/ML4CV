@@ -44,8 +44,8 @@ def read_images_batched(img_id,  # int32
     return img_id, img, bbox, annotations
 
 
-def input_data_from_annotations(img_id,  # int32
-                                img,  # height, width, 3
+def input_data_from_annotations(img_id,  # n, int32
+                                img,  # n, height, width, 3
                                 bboxes,  # n, 4 - float32 (x,y,w,h)
                                 annotations,  # n, K, 3 - int32 (x,y,valid)
                                 cfg,
@@ -98,7 +98,7 @@ def input_data_from_annotations(img_id,  # int32
     crops = crops / tf.concat([image_wh, image_wh], axis=1)  # n, 4
     # this could be done using a batched input
     # n, model_input_h, model_input_w, 3
-    box_indices = tf.zeros((n,), dtype=np.int32)  # if tf.shape(img_id)[0] == 1 else tf.range(tf.shape(img_id)[0])
+    box_indices = tf.zeros((n,), dtype=np.int32) if cfg['coco_dataset'] else tf.range(tf.shape(img_id)[0])
     # print(img.shape, crops.shape, box_indices.shape)
     input_crops = tf.image.crop_and_resize(img,
                                            crops,
